@@ -1,5 +1,5 @@
 import {ApplicationConfig, importProvidersFrom} from "@angular/core";
-import {BrowserModule} from "@angular/platform-browser";
+import {BrowserModule, provideClientHydration, withEventReplay} from "@angular/platform-browser";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
@@ -30,6 +30,6 @@ export const appConfig: ApplicationConfig = {
     CoursesService,
     CourseResolver,
     provideAnimations(),
-    provideHttpClient(withInterceptorsFromDi(), withFetch())
+    provideHttpClient(withInterceptorsFromDi(), withFetch()), provideClientHydration(withEventReplay())
   ]
 };
