@@ -31,7 +31,9 @@ export class CourseComponent implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
-        private coursesService: CoursesService) {
+        private coursesService: CoursesService,
+        private titleService: Title,
+        private metaService: Meta) {
 
     }
 
@@ -42,6 +44,12 @@ export class CourseComponent implements OnInit {
         this.course = this.route.snapshot.data["course"];
 
         this.dataSource = new MatTableDataSource([]);
+
+        this.titleService.setTitle(this.course.description);
+        this.metaService.updateTag({
+            name: 'description',
+            content: this.course.longDescription
+        });
 
         this.coursesService.findAllCourseLessons(this.course.id)
             .subscribe(lessons => this.dataSource.data = lessons);
