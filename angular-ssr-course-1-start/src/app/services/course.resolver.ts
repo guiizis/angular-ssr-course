@@ -1,29 +1,41 @@
-import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
-import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router';
-import {Course} from '../model/course';
-import {Observable, of} from 'rxjs';
-import {CoursesService} from './courses.service';
-import {first, tap} from 'rxjs/operators';
-import {isPlatformServer} from '@angular/common';
+import { Inject, Injectable, makeStateKey, PLATFORM_ID, TransferState } from '@angular/core';
+import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { Course } from '../model/course';
+import { Observable, of } from 'rxjs';
+import { CoursesService } from './courses.service';
+import { first, tap } from 'rxjs/operators';
+import { isPlatformServer } from '@angular/common';
+import { I } from 'node_modules/@angular/cdk/a11y-module.d-DBHGyKoh';
 
 
 @Injectable()
 export class CourseResolver implements Resolve<Course> {
 
-    constructor(private coursesService: CoursesService) {
+  constructor(
+    private coursesService: CoursesService,
+    private transferState: TransferState,
+    @Inject(PLATFORM_ID) private platformId
+  ) { }
 
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Course> {
+    const courseId = route.params['id'];
+    const COURSE_KEY = makeStateKey<Course>('course-' + courseId);
+
+    if (this.transferState.hasKey(COURSE_KEY)) {
+      const course = this.transferState.get<Course>(COURSE_KEY, null);
+      this.transferState.remove(COURSE_KEY);
+
+      return of(course);
+    } else {
+      return this.coursesService.findCourseById(courseId)
+        .pipe(
+          first(),
+          tap(course => {
+            if (isPlatformServer(this.platformId)) {
+              this.transferState.set(COURSE_KEY, course);
+            }
+          })
+        );
     }
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Course> {
-
-        const courseId = route.params['id'];
-
-        return this.coursesService.findCourseById(courseId)
-            .pipe(
-                first()
-            );
-
-
-    }
-
+  }
 }
