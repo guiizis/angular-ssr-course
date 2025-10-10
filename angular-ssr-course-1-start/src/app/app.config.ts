@@ -23,7 +23,6 @@ import {CourseResolver} from "./services/course.resolver";
 import {provideAnimations} from "@angular/platform-browser/animations";
 import { provideHttpClient, withFetch, withInterceptorsFromDi } from "@angular/common/http";
 
-
 export const appConfig: ApplicationConfig = {
   providers: [
     importProvidersFrom(BrowserModule, MatMenuModule, MatButtonModule, MatIconModule, MatCardModule, MatTabsModule, MatSidenavModule, MatListModule, MatToolbarModule, MatInputModule, MatTableModule, MatPaginatorModule, MatSortModule, MatProgressSpinnerModule, MatDialogModule, AppRoutingModule, MatSelectModule, MatDatepickerModule, ReactiveFormsModule),
